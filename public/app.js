@@ -60,11 +60,11 @@ function initRoomPicker() {
   //}
 
   const rooms = [
-    //{ title: 'Veterans Room', model: 'Elks_Lodge_Veterans_Room.glb', deviceId: 'DE6443062C87' },
-    //{ title: 'Secretary Office', model: 'Elks_Lodge_Secretary_Office.glb', deviceId: 'DE6443463D1A' },
-    //{ title: 'Decorations Room', model: 'Elks_Lodge_Decorations_Room.glb', deviceId: 'E876C3062765' },
-    //{ title: 'Candle Room', model: 'Elks_Lodge_Candle_Room.glb', deviceId: 'E77641C6391B' },
-    //{ title: 'Poker Room', model: 'Elks_Lodge_Poker_Room.glb', deviceId: 'DE6443465621' },
+    { title: 'Veterans Room', model: 'Elks_Lodge_Veterans_Room.glb', deviceId: 'DE6443062C87' },
+    { title: 'Secretary Office', model: 'Elks_Lodge_Secretary_Office.glb', deviceId: 'DE6443463D1A' },
+    { title: 'Decorations Room', model: 'Elks_Lodge_Decorations_Room.glb', deviceId: 'E876C3062765' },
+    { title: 'Candle Room', model: 'Elks_Lodge_Candle_Room.glb', deviceId: 'E77641C6391B' },
+    { title: 'Poker Room', model: 'Elks_Lodge_Poker_Room.glb', deviceId: 'DE6443465621' },
     { title: 'Kitchen', model: 'Elks_Lodge_Kitchen.glb', deviceId: 'E876C3067A6E' },
     { title: 'Banquet Hall - far side', model: 'Elks_Lodge_Banquet_Hall.glb', deviceId: 'E59003C66482' },
     { title: 'Banquet Hall - left side', model: 'Elks_Lodge_Banquet_Hall.glb', deviceId: 'E77644C65A92' },
@@ -74,7 +74,7 @@ function initRoomPicker() {
     { title: 'Pool Room', model: 'Elks_Lodge_Pool_Room.glb', deviceId: 'E876C046463D' },
     { title: 'Basement - far side', model: 'Elks_Lodge_Basement.glb', deviceId: 'E59004065970' },
     //{ title: 'Cigar Room', model: 'Elks_Lodge_Cigar_Room.glb', deviceId: 'E590044624BC' },
-    //{ title: 'Outside Temperature', deviceId: 'E876C4461744' },
+    { title: 'Outside Temperature', deviceId: 'E876C4461744' },
   ];
 
   if (!pickerEl) return;
