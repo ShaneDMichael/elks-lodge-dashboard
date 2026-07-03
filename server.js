@@ -34,12 +34,15 @@ function requireViewerToken(req, res, next) {
 
 app.use('/api', requireViewerToken);
 
-function buildSwitchBotHeaders() {
-  const token = typeof process.env.SWITCHBOT_TOKEN === 'string' ? process.env.SWITCHBOT_TOKEN.trim() : process.env.SWITCHBOT_TOKEN;
-  const secret = typeof process.env.SWITCHBOT_SECRET === 'string' ? process.env.SWITCHBOT_SECRET.trim() : process.env.SWITCHBOT_SECRET;
+function buildSwitchBotHeaders(tokenEnvName = 'SWITCHBOT_TOKEN', secretEnvName = 'SWITCHBOT_SECRET') {
+  const tokenRaw = process.env[tokenEnvName];
+  const secretRaw = process.env[secretEnvName];
+
+  const token = typeof tokenRaw === 'string' ? tokenRaw.trim() : tokenRaw;
+  const secret = typeof secretRaw === 'string' ? secretRaw.trim() : secretRaw;
 
   if (!token || !secret) {
-    const missing = [!token ? 'SWITCHBOT_TOKEN' : null, !secret ? 'SWITCHBOT_SECRET' : null].filter(Boolean);
+    const missing = [!token ? tokenEnvName : null, !secret ? secretEnvName : null].filter(Boolean);
     const err = new Error(`Missing env vars: ${missing.join(', ')}`);
     err.statusCode = 500;
     throw err;
@@ -102,6 +105,47 @@ app.get('/api/temperature', async (req, res) => {
     const body = payload?.body;
 
     // Meter-like devices generally report temperature / humidity
+    const temperature = body?.temperature ?? body?.temp ?? body?.tempC;
+    const humidity = body?.humidity ?? body?.humid;
+    const battery = body?.battery;
+
+    return res.json({
+      temperature,
+      humidity,
+      battery,
+      fetchedAt: new Date().toISOString(),
+    });
+  } catch (e) {
+    const status = e?.statusCode || e?.response?.status || 500;
+    const message = e?.response?.data || e?.message || 'Unknown error';
+    return res.status(status).json({ error: message });
+  }
+});
+
+app.get('/api/outdoor_temperature', async (req, res) => {
+  try {
+    const requestedId = typeof req.query?.deviceId === 'string' ? req.query.deviceId.trim() : null;
+    const deviceId = requestedId || process.env.SWITCHBOT_OUTDOOR_DEVICE_ID;
+    if (!deviceId) {
+      return res.status(500).json({ error: 'Missing env var: SWITCHBOT_OUTDOOR_DEVICE_ID' });
+    }
+
+    if (!/^[A-Za-z0-9]{12,32}$/.test(deviceId)) {
+      return res.status(400).json({ error: 'Invalid deviceId' });
+    }
+
+    const headers = buildSwitchBotHeaders('SWITCHBOT_OUTDOOR_TOKEN', 'SWITCHBOT_OUTDOOR_SECRET');
+    const url = `https://api.switch-bot.com/v1.1/devices/${encodeURIComponent(deviceId)}/status`;
+
+    const response = await axios.get(url, { headers, timeout: 10_000 });
+
+    const payload = response?.data;
+
+    if (payload?.statusCode && payload.statusCode !== 100) {
+      return res.status(502).json({ error: payload?.message || 'switchbot_error', statusCode: payload.statusCode });
+    }
+
+    const body = payload?.body;
     const temperature = body?.temperature ?? body?.temp ?? body?.tempC;
     const humidity = body?.humidity ?? body?.humid;
     const battery = body?.battery;
