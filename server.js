@@ -163,40 +163,6 @@ app.get('/api/outdoor_temperature', async (req, res) => {
   }
 });
 
-app.get('/api/debug_env', (req, res) => {
-  const norm = (name) => {
-    const v = process.env[name];
-    if (typeof v === 'string') {
-      const trimmed = v.trim();
-      return { present: trimmed.length > 0, trimmedLength: trimmed.length };
-    }
-    return { present: Boolean(v), trimmedLength: null };
-  };
-
-  return res.json({
-    switchbot: {
-      SWITCHBOT_TOKEN: norm('SWITCHBOT_TOKEN'),
-      SWITCHBOT_SECRET: norm('SWITCHBOT_SECRET'),
-      SWITCHBOT_DEVICE_ID: norm('SWITCHBOT_DEVICE_ID'),
-      SWITCHBOT_OUTDOOR_TOKEN: norm('SWITCHBOT_OUTDOOR_TOKEN'),
-      SWITCHBOT_OUTDOOR_SECRET: norm('SWITCHBOT_OUTDOOR_SECRET'),
-      SWITCHBOT_OUTDOOR_DEVICE_ID: norm('SWITCHBOT_OUTDOOR_DEVICE_ID'),
-    },
-    fetchedAt: new Date().toISOString(),
-  });
-});
-
 app.listen(port, () => {
-  const has = (name) => {
-    const v = process.env[name];
-    return typeof v === 'string' ? v.trim().length > 0 : Boolean(v);
-  };
-
-  console.log('[env] SWITCHBOT_TOKEN present:', has('SWITCHBOT_TOKEN'));
-  console.log('[env] SWITCHBOT_SECRET present:', has('SWITCHBOT_SECRET'));
-  console.log('[env] SWITCHBOT_DEVICE_ID present:', has('SWITCHBOT_DEVICE_ID'));
-  console.log('[env] SWITCHBOT_OUTDOOR_TOKEN present:', has('SWITCHBOT_OUTDOOR_TOKEN'));
-  console.log('[env] SWITCHBOT_OUTDOOR_SECRET present:', has('SWITCHBOT_OUTDOOR_SECRET'));
-  console.log('[env] SWITCHBOT_OUTDOOR_DEVICE_ID present:', has('SWITCHBOT_OUTDOOR_DEVICE_ID'));
   console.log(`Server running on http://localhost:${port}`);
 });
